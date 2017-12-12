@@ -9,8 +9,10 @@ end
 # Devise
 gem 'devise'
 gem 'omniauth-twitter'
-gem 'haml-rails'
 
+gem 'haml-rails'
+gem 'twitter','= 5.0.0'
+gem 'json'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.4'

@@ -1,32 +1,26 @@
 %h1 Home#index
 %p Find me in app/views/home/index.html.erb
-= form_for current_user do |f|
-  <%= f.text_field :name %>
-  <%= f.text_area :introduction %>
-<% end %>
-%textarea{:cols => "80", :name => "tweet", :rows => "8"}
-
+= form_for @tweet,url:tweet_post_path,remote:true do |f|
+  =f.text_area :content,id:"tweet_area"
+  =f.submit :id=>"tweet_submit"
 
 :javascript
   var speech = new webkitSpeechRecognition();
   speech.lang = "ja";
   speech.start();
   speech.addEventListener( 'result' , function( e ) {
-    console.log(e.type);
       result=e.results[0][0].transcript;
-      console.log(result);
+      document.getElementById("tweet_area").value=result;
+      document.getElementById("tweet_submit").click();
       ss = new SpeechSynthesisUtterance(result);
-      console.log(ss);
       speechSynthesis.speak(ss);
   });
   speech.addEventListener( 'end' , function( e ) {
     if(speechSynthesis.speaking){
       ss.addEventListener('end',function(e){
-        console.log(e);
         speech.start();
       });
     }else{
-        console.log(e);
         speech.start();
     }
   });
