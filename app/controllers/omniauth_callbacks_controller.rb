@@ -2,10 +2,12 @@ class OmniauthCallbacksController < Devise::OmniauthCallbacksController
   include Devise::Controllers::Rememberable
     def twitter
       auth = request.env['omniauth.auth']
-      d
+
       user = User.find_or_create_by(
         uid:auth.id,
-        screenname:auth.nickname
+        screenname:auth.nickname,
+        twitter_token:auth.credentials.token,
+        twitter_secret:auth.credentials.secret
       )
       remember_me(user)
       sign_in_and_redirect user,event: :authentication

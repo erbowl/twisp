@@ -9,6 +9,7 @@ end
 # Devise
 gem 'devise'
 gem 'omniauth-twitter'
+gem 'haml-rails'
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'

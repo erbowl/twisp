@@ -8,6 +8,8 @@ class DeviseCreateUsers < ActiveRecord::Migration[5.1]
       #twitter
       t.string :uid
       t.string :screenname
+      t.string :twitter_token
+      t.string :twitter_secret
 
       ## Recoverable
       t.string   :reset_password_token
