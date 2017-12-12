@@ -5,3 +5,28 @@
   <%= f.text_area :introduction %>
 <% end %>
 %textarea{:cols => "80", :name => "tweet", :rows => "8"}
+
+
+:javascript
+  var speech = new webkitSpeechRecognition();
+  speech.lang = "ja";
+  speech.start();
+  speech.addEventListener( 'result' , function( e ) {
+    console.log(e.type);
+      result=e.results[0][0].transcript;
+      console.log(result);
+      ss = new SpeechSynthesisUtterance(result);
+      console.log(ss);
+      speechSynthesis.speak(ss);
+  });
+  speech.addEventListener( 'end' , function( e ) {
+    if(speechSynthesis.speaking){
+      ss.addEventListener('end',function(e){
+        console.log(e);
+        speech.start();
+      });
+    }else{
+        console.log(e);
+        speech.start();
+    }
+  });
