@@ -4,8 +4,13 @@ class OmniauthCallbacksController < Devise::OmniauthCallbacksController
       auth = request.env['omniauth.auth']
 
       user = User.find_or_create_by(
-        uid:auth.id,
-        screenname:auth.nickname,
+        uid:auth.uid,
+        screenname:auth.info.nickname,
+        twitter_token:auth.credentials.token,
+        twitter_secret:auth.credentials.secret
+      )
+      user.update(
+        screenname:auth.info.nickname,
         twitter_token:auth.credentials.token,
         twitter_secret:auth.credentials.secret
       )

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171212173011) do
+ActiveRecord::Schema.define(version: 20171213060154) do
 
   create_table "tweets", force: :cascade do |t|
     t.string "content"
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 20171212173011) do
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
-    t.string "uid"
+    t.integer "uid", limit: 8
     t.string "screenname"
     t.string "twitter_token"
     t.string "twitter_secret"

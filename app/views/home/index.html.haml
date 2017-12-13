@@ -1,8 +1,10 @@
-%h1 Home#index
-%p Find me in app/views/home/index.html.erb
 = form_for @tweet,url:tweet_post_path,remote:true do |f|
   =f.text_area :content,id:"tweet_area"
   =f.submit :id=>"tweet_submit"
+
+%a.twitter-timeline{:href => "https://twitter.com/"+@user.screenname+"?ref_src=twsrc%5Etfw"} Tweets by #{@user.screenname}
+%script{:async => "", :charset => "utf-8", :src => "https://platform.twitter.com/widgets.js"}
+
 
 :javascript
   var speech = new webkitSpeechRecognition();

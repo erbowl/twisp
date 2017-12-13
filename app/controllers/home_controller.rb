@@ -1,7 +1,11 @@
 class HomeController < ApplicationController
   def index
-    @user=current_user
-    @tweet=@user.tweets.new
+    if user_signed_in?
+      @user=current_user
+      @tweet=@user.tweets.new
+    else
+      render template: 'home/welcome'
+    end
   end
 
   def tweet_post
