@@ -23,4 +23,12 @@ class HomeController < ApplicationController
     # ajaxで結果を通知したいところ。
     # redirect_to root_path, notice: 'ツイートしました！'
   end
+
+  def tweet_config
+    current_user.update(tweet_config_params)
+  end
+    private
+    def tweet_config_params
+      params.require(:user).permit(:tweet_confirm,:tweet_signal)
+    end
 end

@@ -5,5 +5,6 @@ Rails.application.routes.draw do
     delete :sign_out,to: 'devise/sessions#destroy',as: :destroy_user_session
   end
   post 'tweet_post',to: 'home#tweet_post',as: :tweet_post
+  patch 'tweet_config',to: 'home#tweet_config',as: :tweet_config
   root 'home#index'
 end

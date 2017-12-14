@@ -2,15 +2,32 @@
   =f.text_area :content,id:"tweet_area"
   =f.submit :id=>"tweet_submit"
 
-%a.twitter-timeline{:href => "https://twitter.com/"+@user.screenname+"?ref_src=twsrc%5Etfw"} Tweets by #{@user.screenname}
+= form_for @user,url:tweet_config_path,remote:true do |f|
+  =f.check_box :tweet_confirm
+  =f.label :tweet_confirm, "Tweetする前に音声で確認する"
+  %br
+  =f.check_box :tweet_signal
+  =f.label :tweet_signal, "Tweetする前に「ツイート」と言ってからにする"
+  =f.submit :id=>"tweet_config"
+
+%button#rec 録音開始
+
+.center
+  %a.twitter-timeline{:href => "https://twitter.com/"+@user.screenname+"?ref_src=twsrc%5Etfw"} Tweets by #{@user.screenname}
+
+
+
+
 %script{:async => "", :charset => "utf-8", :src => "https://platform.twitter.com/widgets.js"}
-
-
 :javascript
+
+
+
   var speech = new webkitSpeechRecognition();
-  speech.lang = "ja";
-  speech.start();
+  // speech.lang = "ja";
+  // speech.start();
   speech.addEventListener( 'result' , function( e ) {
+  console.log(e);
       result=e.results[0][0].transcript;
       document.getElementById("tweet_area").value=result;
       document.getElementById("tweet_submit").click();
@@ -18,11 +35,27 @@
       speechSynthesis.speak(ss);
   });
   speech.addEventListener( 'end' , function( e ) {
-    if(speechSynthesis.speaking){
-      ss.addEventListener('end',function(e){
-        speech.start();
-      });
+   console.log(e);
+    if(rec.textContent=="録音開始"){
+
     }else{
-        speech.start();
+      if(speechSynthesis.speaking){
+        ss.addEventListener('end',function(e){
+          speech.start();
+        });
+      }else{
+          speech.start();
+      }
     }
+  });
+
+  var rec=document.getElementById("rec");
+  rec.addEventListener( 'click' , function( e ) {
+      if(rec.textContent=="録音開始"){
+        rec.textContent="録音停止";
+        speech.start();
+      }else{
+        rec.textContent="録音開始";
+        speech.abort();
+      }
   });
