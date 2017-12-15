@@ -2,18 +2,23 @@
 %html
   %head
     %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %meta{:content => "width=device-width,initial-scale=1", :name => "viewport"}/
     %title DeviseRails5
     = csrf_meta_tags
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
   %body
-    .nav
-      %p.title
-        Twisp（仮）-喋ってツイート-        
-    - if user_signed_in?
-      = link_to 'sign out',destroy_user_session_path,method: :delete
-    - else
-      = link_to 'sign in',user_twitter_omniauth_authorize_path
-    %p.notice= notice
-    %p.alert= alert
-    = yield
+    .overflow_hidden
+      .nav
+        %p.title
+          TWISP
+      .row
+        .col-sm-10.col-sm-offset-1.has_ad
+          .ad_banner
+      .row
+        .col-sm-4.has_ad
+          .ad_rectancle
+        .col-sm-4          
+          = yield
+        .col-sm-4.has_ad
+          .ad_rectancle

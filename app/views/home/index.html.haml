@@ -1,19 +1,27 @@
-= form_for @tweet,url:tweet_post_path,remote:true do |f|
-  =f.text_area :content,id:"tweet_area"
-  =f.submit :id=>"tweet_submit"
-
-= form_for @user,url:tweet_config_path,remote:true do |f|
-  =f.check_box :tweet_confirm
-  =f.label :tweet_confirm, "Tweetする前に音声で確認する"
+.profile
+  %image{:src=>@user.profile_url}
+  %p #{@user.screenname}
   %br
-  =f.check_box :tweet_signal
-  =f.label :tweet_signal, "Tweetする前に「ツイート」と言ってからにする"
-  =f.submit :id=>"tweet_config"
+  = link_to 'ログアウト',destroy_user_session_path,method: :delete,:class=>"circle"
 
-%button#rec 録音開始
+= form_for @tweet,url:tweet_post_path,remote:true do |f|
+  =f.text_area :content,id:"tweet_area",:rows=>"5"
+  -# =f.submit :id=>"tweet_submit",:class=>"circle"
+  =f.submit :id=>"tweet_submit",:class=>"hidden"
+#config_area
+  = form_for @user,url:tweet_config_path,remote:true do |f|
+    =f.check_box :tweet_confirm
+    =f.label :tweet_confirm, "Tweetする前に音声で確認する"
+    %br
+    =f.check_box :tweet_signal
+    =f.label :tweet_signal, "「ツイート」と言ってから認識させる"
+    =f.submit :id=>"tweet_config",:class=>"hidden"
+.has_button
+  %a.circle Tweet
+%button#rec.circle 録音開始
 
-.center
-  %a.twitter-timeline{:href => "https://twitter.com/"+@user.screenname+"?ref_src=twsrc%5Etfw"} Tweets by #{@user.screenname}
+= render :partial => "tweet", :collection => @tweets
+-# %a.twitter-timeline{:href => "https://twitter.com/"+@user.screenname+"?ref_src=twsrc%5Etfw"} Tweets by #{@user.screenname}
 
 
 
@@ -21,18 +29,52 @@
 %script{:async => "", :charset => "utf-8", :src => "https://platform.twitter.com/widgets.js"}
 :javascript
 
+  var tweet_config=document.getElementById("config_area");
+  tweet_config.addEventListener('change',function(e){
+    document.getElementById("tweet_config").click();
+    console.log(e);
+  })
 
+  var signal=false;
+  var confirm_now=false;
 
   var speech = new webkitSpeechRecognition();
   // speech.lang = "ja";
   // speech.start();
   speech.addEventListener( 'result' , function( e ) {
-  console.log(e);
+    console.log(e);
       result=e.results[0][0].transcript;
+
+      if(document.getElementById("user_tweet_signal").checked && !signal){
+        if(result=="ツイート"){
+            signal=true;
+        }else{
+          return;
+        }
+      }else{
+        signal=false;
+      }
+
       document.getElementById("tweet_area").value=result;
-      document.getElementById("tweet_submit").click();
-      ss = new SpeechSynthesisUtterance(result);
-      speechSynthesis.speak(ss);
+
+      if(document.getElementById("user_tweet_confirm").checked){
+        ss = new SpeechSynthesisUtterance(result+"で投稿しても良いですか？");
+        speechSynthesis.speak(ss);
+        confirm_now=true;
+        ss.addEventListener('end',function(e){
+          var speech_result = new webkitSpeechRecognition();
+          speech_result.start();
+          speech_result.addEventListener( 'result' , function( e ) {
+            res=e.results[0][0].transcript;
+            if(res=="はい"){
+              postTweet(result)
+            }else{
+            }
+          });
+        });
+      }else{
+        postTweet(result);
+      }
   });
   speech.addEventListener( 'end' , function( e ) {
    console.log(e);
@@ -59,3 +101,10 @@
         speech.abort();
       }
   });
+
+  function postTweet(result){
+    document.getElementById("tweet_submit").click();
+    document.getElementById("tweet_area").value="";
+    ss = new SpeechSynthesisUtterance(result+"と投稿しました");
+    speechSynthesis.speak(ss);
+  }
