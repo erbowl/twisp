@@ -46,8 +46,12 @@
       result=e.results[0][0].transcript;
 
       if(document.getElementById("user_tweet_signal").checked && !signal){
+      console.log(signal);
         if(result=="ツイート"){
             signal=true;
+            console.log("come on!");
+            //ここに音を鳴らす実装 
+            return;
         }else{
           return;
         }
@@ -66,9 +70,18 @@
           speech_result.start();
           speech_result.addEventListener( 'result' , function( e ) {
             res=e.results[0][0].transcript;
+            confirm_now=false;
             if(res=="はい"){
-              postTweet(result)
+              postTweet(result).addEventListener('end',function(e){
+                speech.start();
+              })
             }else{
+              ss = new SpeechSynthesisUtterance("投稿しませんでした。");
+              speechSynthesis.speak(ss);
+              ss.addEventListener('end',function(e){
+                speech.start();
+              })
+
             }
           });
         });
@@ -77,6 +90,9 @@
       }
   });
   speech.addEventListener( 'end' , function( e ) {
+    if(confirm_now){
+      return;
+    }
    console.log(e);
     if(rec.textContent=="録音開始"){
 
@@ -107,4 +123,5 @@
     document.getElementById("tweet_area").value="";
     ss = new SpeechSynthesisUtterance(result+"と投稿しました");
     speechSynthesis.speak(ss);
+    return ss;
   }
